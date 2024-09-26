@@ -47,9 +47,9 @@ fn main() {
     let k = 22;
     let calcs = (140*1024)+1;
 
+    let curr_time = std::time::Instant::now();
     let params = Params::<Bn256>::unsafe_setup(k);
     let os_rng = ChaCha8Rng::from_seed([101u8; 32]);
-    let mut transcript = Blake2bWrite::<_, G1Affine, Challenge255<_>>::init(vec![]);
 
     let inputs = (0..calcs - 1)
         .into_iter()
@@ -71,6 +71,7 @@ fn main() {
         },
         calcs,
     );
+    println!("Pre-processing time: {:?}", curr_time.elapsed());
 
 
     let curr_time = std::time::Instant::now();
@@ -80,6 +81,7 @@ fn main() {
 
 
     let curr_time = std::time::Instant::now();
+    let mut transcript = Blake2bWrite::<_, G1Affine, Challenge255<_>>::init(vec![]);
     create_proof::<KZGCommitmentScheme<Bn256>, ProverSHPLONK<'_, Bn256>, _, _, _, _>(
         &params,
         &pk,
