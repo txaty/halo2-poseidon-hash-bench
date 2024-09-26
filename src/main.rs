@@ -45,8 +45,8 @@ impl Circuit<Fp> for TestCircuit {
 }
 
 fn main() {
-    let k = 23;
-    let calcs = (140*1024)+1;
+    let k = 11;
+    let calcs = 2;
 
     let curr_time = std::time::Instant::now();
     let params = Params::<Bn256>::unsafe_setup(k);
@@ -62,7 +62,7 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
-    let controls = vec![13; calcs - 1];
+    let controls = vec![54; calcs - 1];
 
     let circuit = TestCircuit(
         PoseidonHashTable {
@@ -72,11 +72,43 @@ fn main() {
         },
         calcs,
     );
+
+    use plotters::prelude::*;
+    let root = BitMapBackend::new("layout.png", (2048, 4096)).into_drawing_area();
+    root.fill(&WHITE).unwrap();
+    let root = root
+        .titled("Example Circuit Layout", ("sans-serif", 60))
+        .unwrap();
+
+    halo2_proofs::dev::CircuitLayout::default()
+        // You can optionally render only a section of the circuit.
+        .view_width(0..32)
+        .view_height(0..256)
+        // You can hide labels, which can be useful with smaller areas.
+        .show_labels(true)
+        .show_equality_constraints(true)
+        .mark_equality_cells(true)
+        // Render the circuit onto your area!
+        // The first argument is the size parameter for the circuit.
+        .render(8, &circuit, &root)
+        .unwrap();
     println!("Pre-processing time: {:?}", curr_time.elapsed());
 
 
     let curr_time = std::time::Instant::now();
     let vk = keygen_vk(&params, &circuit).unwrap();
+    println!("num gates: {:?}", vk.cs().gates().len());
+    println!("num fixed columns: {:?}", vk.cs().num_fixed_columns);
+    println!("num advice columns: {:?}", vk.cs().num_advice_columns());
+    println!("minimum rows: {:?}", vk.cs().minimum_rows());
+    println!("cs degree: {:?}", vk.cs().degree());
+    println!("num phases: {:?}", vk.cs().max_phase());
+    println!("advice query size: {:?}", vk.cs().advice_queries.len());
+    println!("fixed query size: {:?}", vk.cs().fixed_queries.len());
+    println!("permutation: {:?}", vk.cs().permutation.columns.len());
+    println!("advice column phases: {:?}", vk.cs().advice_column_phase.len());
+    println!("cs: {:?}", vk.cs());
+    // println!("gates: {:?}", vk.cs().gates);
     let pk = keygen_pk(&params, vk, &circuit).unwrap();
     println!("keygen time: {:?}", curr_time.elapsed());
 
