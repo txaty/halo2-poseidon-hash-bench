@@ -44,8 +44,8 @@ impl Circuit<Fp> for TestCircuit {
 }
 
 fn main() {
-    let k = 9;
-    let calcs = 140*1024+1;
+    let k = 22;
+    let calcs = (140*1024)+1;
 
     let params = Params::<Bn256>::unsafe_setup(k);
     let os_rng = ChaCha8Rng::from_seed([101u8; 32]);
@@ -99,7 +99,7 @@ fn main() {
     assert!(
         verify_proof::<KZGCommitmentScheme<Bn256>, VerifierSHPLONK<'_, Bn256>, _, _, _>(
             &verifier_params,
-            &vk,
+            &pk.get_vk(),
             strategy,
             &[&[]],
             &mut transcript
