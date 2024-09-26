@@ -1,0 +1,14 @@
+[package]
+name = "halo2-poseidon-hash-bench"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+poseidon-circuit = { git = "https://github.com/scroll-tech/poseidon-circuit.git" }
+halo2curves = { version = "0.1.0", features = [ "derive_serde" ] }
+halo2_proofs = { git = "https://github.com/privacy-scaling-explorations/halo2.git", tag = "v2022_09_10" }
+rand_chacha = "0.3.1"
+
+[patch."https://github.com/privacy-scaling-explorations/halo2.git"]
+halo2_proofs = { git = "https://github.com/scroll-tech/halo2.git", branch = "v1.0" }
