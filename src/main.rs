@@ -95,19 +95,21 @@ fn main() {
     let proof_script = transcript.finalize();
     println!("Proof generation time: {:?}", curr_time.elapsed());
 
-    let curr_time = std::time::Instant::now();
-    let mut transcript = Blake2bRead::<_, _, Challenge255<_>>::init(&proof_script[..]);
     let verifier_params: ParamsVerifier<Bn256> = params.verifier_params().clone();
-    let strategy = SingleStrategy::new(&params);
-    assert!(
-        verify_proof::<KZGCommitmentScheme<Bn256>, VerifierSHPLONK<'_, Bn256>, _, _, _>(
-            &verifier_params,
-            &pk.get_vk(),
-            strategy,
-            &[&[]],
-            &mut transcript
-        )
-            .is_ok()
-    );
-    println!("Proof verification time: {:?}", curr_time.elapsed());
+    for _ in 0..10 {
+        let curr_time = std::time::Instant::now();
+        let mut transcript = Blake2bRead::<_, _, Challenge255<_>>::init(&proof_script[..]);
+        let strategy = SingleStrategy::new(&params);
+        assert!(
+            verify_proof::<KZGCommitmentScheme<Bn256>, VerifierSHPLONK<'_, Bn256>, _, _, _>(
+                &verifier_params,
+                &pk.get_vk(),
+                strategy,
+                &[&[]],
+                &mut transcript
+            )
+                .is_ok()
+        );
+        println!("Proof verification time: {:?}", curr_time.elapsed());
+    }
 }
