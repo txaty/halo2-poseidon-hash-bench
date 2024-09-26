@@ -1,4 +1,5 @@
 use halo2_proofs::circuit::{Layouter, SimpleFloorPlanner};
+use halo2_proofs::dev::MockProver;
 use halo2_proofs::plonk::{create_proof, keygen_pk, keygen_vk, verify_proof, Circuit, ConstraintSystem, Error};
 use halo2_proofs::poly::commitment::ParamsProver;
 use halo2_proofs::poly::kzg::commitment::{
@@ -44,7 +45,7 @@ impl Circuit<Fp> for TestCircuit {
 }
 
 fn main() {
-    let k = 22;
+    let k = 23;
     let calcs = (140*1024)+1;
 
     let curr_time = std::time::Instant::now();
